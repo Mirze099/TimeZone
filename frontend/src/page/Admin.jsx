@@ -4,16 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import {
   addProduct,
-  // delProduct,
+  delProduct,
   getData,
+  search,
+  sorthigh,
+  sortlow,
 } from "../redux/features/productSlice";
 
 const Admin = () => {
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getData());
-  }, [dispatch]);
 
   const [modal, setModal] = useState(false);
 
@@ -21,6 +20,10 @@ const Admin = () => {
   const closeModal = () => setModal(false);
 
   const { products } = useSelector((state) => state.products);
+
+  useEffect(() => {
+    dispatch(getData());
+  }, [dispatch]);
 
   const { handleSubmit, handleChange, resetForm, values } = useFormik({
     initialValues: {
@@ -49,9 +52,9 @@ const Admin = () => {
           />
           <input
             type="text"
-            name="name"
+            name="title"
             onChange={handleChange}
-            value={values.name || ""}
+            value={values.title || ""}
             placeholder="Məhsul adı"
           />
           <input
@@ -76,35 +79,48 @@ const Admin = () => {
       )}
 
       <button onClick={openModal}>Məhsul Yarat</button>
+      <br />
+
+      <button onClick={() => dispatch(sortlow())}>low</button>
+      <button onClick={() => dispatch(sorthigh())}>high</button>
+      <input
+        type="text"
+        name=""
+        id=""
+        onChange={(e) => dispatch(search(e.target.value))}
+      />
 
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>#</th>
-            <th>Qiymət</th>
             <th>Ad</th>
+            <th>Qiymət</th>
+            <th>Cat</th>
             <th>Əməliyyatlar</th>
           </tr>
         </thead>
         <tbody>
-          {products.map((item) => (
-            <tr key={item._id}>
-              <td>
-                <img
-                  style={{ width: "100px", height: "100px" }}
-                  src={item.image}
-                  alt={item.name}
-                />
-              </td>
-              <td>{item.price}</td>
-              <td>{item.name}</td>
-              <td>
-                <button onClick={() => dispatch(delProduct(item._id))}>
-                  Sil
-                </button>
-              </td>
-            </tr>
-          ))}
+          {products &&
+            products.map((item, index) => (
+              <tr key={index}>
+                <td>
+                  <img
+                    style={{ width: "100px", height: "100px" }}
+                    src={item.image}
+                    alt=""
+                  />
+                </td>
+                <td>{item.title}</td>
+                <td>{item.price}</td>
+                <td>{item.category}</td>
+                <td>
+                  <button onClick={() => dispatch(delProduct(item._id))}>
+                    Sil
+                  </button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </Table>
     </div>
